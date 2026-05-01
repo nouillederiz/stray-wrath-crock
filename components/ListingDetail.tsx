@@ -97,7 +97,7 @@ export const ListingDetail: React.FC<ListingDetailProps> = ({ onPurchase, amount
       </div>
       
       <div className="mt-6 flex flex-wrap items-center justify-center gap-4 opacity-50 px-4">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" className="h-3 md:h-4" alt="Visa" />
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEdRE4elIptBYNu_D2M6TxSKgXooAfkt0fRQ&s" className="h-3 md:h-4" alt="Visa" />
         <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="h-4 md:h-6" alt="Mastercard" />
         <div className="h-4 w-px bg-gray-400 hidden sm:block"></div>
         <span className="text-[9px] md:text-[10px] font-bold text-gray-500 uppercase tracking-widest text-center">PCI DSS Compliant</span>

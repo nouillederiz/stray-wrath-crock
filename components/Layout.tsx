@@ -53,9 +53,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           <a href="https://www.facebook.com/messages" target="_blank" rel="noopener noreferrer" className="bg-gray-100 p-2.5 rounded-full cursor-pointer hover:bg-gray-200 transition-colors" title="Messenger">
             <i className="fab fa-facebook-messenger text-gray-700"></i>
           </a>
-          <div className="bg-gray-100 p-2.5 rounded-full cursor-pointer hover:bg-gray-200 transition-colors relative" title="Notifications">
+          <div className="bg-gray-100 p-2.5 rounded-full cursor-pointer hover:bg-gray-200 transition-colors" title="Notifications">
             <i className="fas fa-bell text-gray-700"></i>
-            <span className="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold rounded-full px-1.5 py-0.5 border-2 border-white translate-x-1 -translate-y-1">9+</span>
           </div>
           <div className="w-10 h-10 rounded-full bg-gray-300 overflow-hidden border border-gray-200 cursor-pointer hover:brightness-95 transition-all ml-1">
             <img 

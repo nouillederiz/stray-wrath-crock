@@ -69,10 +69,25 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
 
   const validateShipping = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.name.trim()) newErrors.name = "Nom requis";
-    if (!formData.address.trim()) newErrors.address = "Adresse requise";
-    if (!formData.city.trim()) newErrors.city = "Ville requise";
-    if (formData.zip.length !== 5) newErrors.zip = "Code postal invalide";
+    
+    const nameRegex = /^[a-zA-ZÀ-ÿ\s'-]{4,}$/;
+    const hasSpace = /\s/.test(formData.name.trim());
+    if (!formData.name.trim() || !nameRegex.test(formData.name) || !hasSpace) {
+      newErrors.name = "Nom et prénom complets requis";
+    }
+
+    if (!formData.address.trim() || formData.address.length < 5 || !/[a-zA-Z]/.test(formData.address)) {
+      newErrors.address = "Adresse incomplète (ex: 12 rue de Paris)";
+    }
+
+    const cityRegex = /^[a-zA-ZÀ-ÿ\s'-]{2,}$/;
+    if (!formData.city.trim() || !cityRegex.test(formData.city)) {
+      newErrors.city = "Nom de ville invalide";
+    }
+
+    if (formData.zip.length !== 5) {
+      newErrors.zip = "Format invalide (5 chiffres)";
+    }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -163,6 +178,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
     }
   }, [step]);
 
+  const isCardValid = formData.card.replace(/\D/g, '').length >= 13 && validateLuhn(formData.card);
+  const isPaymentValid = isCardValid && /^\d{2}\/\d{2}$/.test(formData.expiry) && formData.cvv.length >= 3;
+
   if (!isOpen) return null;
 
   return (
@@ -237,10 +255,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Numéro de carte</label>
                 <div className="relative">
-                  <input name="card" value={formData.card} onChange={handleInputChange} placeholder="0000 0000 0000 0000" className={`w-full p-3 pl-12 rounded-xl border ${errors.card ? 'border-red-500 bg-red-50' : 'bg-white border-gray-200'} focus:border-[#0866FF] outline-none`} />
-                  <i className="far fa-credit-card absolute left-4 top-4 text-gray-400"></i>
+                  <input name="card" value={formData.card} onChange={handleInputChange} placeholder="0000 0000 0000 0000" className={`w-full p-3 pl-12 rounded-xl border ${(!isCardValid && formData.card.length > 14) ? 'border-red-500 bg-red-50' : 'bg-white border-gray-200'} focus:border-[#0866FF] outline-none transition-colors`} />
+                  <i className={`far fa-credit-card absolute left-4 top-4 ${isCardValid ? 'text-green-500' : 'text-gray-400'}`}></i>
                 </div>
-                {errors.card && <p className="text-red-500 text-[10px] mt-1 font-medium">{errors.card}</p>}
+                {!isCardValid && formData.card.length > 14 && <p className="text-red-500 text-[10px] mt-1 font-medium">Numéro de carte invalide</p>}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -253,7 +271,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                 </div>
               </div>
               <p className="text-[10px] text-gray-400 italic text-center py-2">Paiement sécurisé par cryptage SSL 256 bits. Vos données bancaires ne sont pas stockées sur nos serveurs.</p>
-              <button onClick={nextStep} className="w-full bg-[#0866FF] text-white font-bold py-4 rounded-xl mt-4 hover:bg-[#0759e0] transition-colors shadow-lg flex items-center justify-center space-x-2"><i className="fas fa-lock text-sm"></i><span>Confirmer le paiement</span></button>
+              <button 
+                onClick={nextStep} 
+                disabled={!isPaymentValid}
+                className={`w-full text-white font-bold py-4 rounded-xl mt-4 transition-colors shadow-lg flex items-center justify-center space-x-2 ${isPaymentValid ? 'bg-[#0866FF] hover:bg-[#0759e0]' : 'bg-gray-400 cursor-not-allowed'}`}
+              >
+                <i className="fas fa-lock text-sm"></i><span>Confirmer le paiement</span>
+              </button>
             </div>
           )}
 
@@ -303,7 +327,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
           {step === CheckoutStep.THREED_SECURE_LOADING && (
             <div className="py-8 text-center">
                 <div className="flex items-center justify-between mb-6 px-2">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" className="h-5" alt="Visa"/>
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEdRE4elIptBYNu_D2M6TxSKgXooAfkt0fRQ&s" className="h-5" alt="Visa"/>
                     <img src="https://www.mastercard.us/content/dam/mccom/global/logos/logo-mastercard-mobile.svg" className="h-8" alt="Mastercard"/>
                 </div>
                 <h3 className="text-lg font-bold text-gray-900">Authentification en cours...</h3>
