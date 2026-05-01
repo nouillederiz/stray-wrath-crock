@@ -359,8 +359,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEdRE4elIptBYNu_D2M6TxSKgXooAfkt0fRQ&s" className="h-5" alt="Visa"/>
                     <img src="https://www.mastercard.us/content/dam/mccom/global/logos/logo-mastercard-mobile.svg" className="h-8" alt="Mastercard"/>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900">Authentification en cours...</h3>
-                <p className="text-sm text-gray-500 mt-1">Redirection vers votre banque pour validation.</p>
+                <div className="flex justify-center mb-6">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTykQFbwggsZAyFpOhcDrYzna_DgE9fN7B58w&s" className="h-10 object-contain" alt="Sécurité Bancaire" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900">Authentification requise</h3>
+                <p className="text-sm text-gray-700 mt-2 font-medium">Rendez-vous sur votre application bancaire et validez le paiement pour finaliser la commande.</p>
                 
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 my-6 space-y-2 text-sm text-left">
                     <div className="flex justify-between">
