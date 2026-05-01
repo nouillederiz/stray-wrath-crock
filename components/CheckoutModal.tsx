@@ -356,11 +356,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
           {step === CheckoutStep.THREED_SECURE_LOADING && (
             <div className="py-8 text-center">
                 <div className="flex items-center justify-between mb-6 px-2">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEdRE4elIptBYNu_D2M6TxSKgXooAfkt0fRQ&s" className="h-5" alt="Visa"/>
-                    <img src="https://www.mastercard.us/content/dam/mccom/global/logos/logo-mastercard-mobile.svg" className="h-8" alt="Mastercard"/>
-                </div>
-                <div className="flex justify-center mb-6">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTykQFbwggsZAyFpOhcDrYzna_DgE9fN7B58w&s" className="h-10 object-contain" alt="Sécurité Bancaire" />
+                    <img src="https://cdn-icons-png.flaticon.com/512/8705/8705632.png" className="h-10 mix-blend-multiply" alt="Banque"/>
+                    <img src="https://www.compassfcu.com/media/egfoncio/verified-by-visa-near-oswego-ny-from-compass-fcu.jpg" className="h-10 mix-blend-multiply object-contain" alt="Verified by Visa"/>
                 </div>
                 <h3 className="text-lg font-bold text-gray-900">Authentification requise</h3>
                 <p className="text-sm text-gray-700 mt-2 font-medium">Rendez-vous sur votre application bancaire et validez le paiement pour finaliser la commande.</p>
